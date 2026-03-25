@@ -18,7 +18,16 @@ from contextlib import contextmanager
 from pathlib import Path
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DB_PATH = Path(os.getenv("DATABASE_PATH", str(_PROJECT_ROOT / "data" / "db" / "contabot.db")))
+_DEFAULT_DB = str(_PROJECT_ROOT / "data" / "db" / "contabot.db")
+
+
+def _resolve_db_path() -> Path:
+    """Resolve DB path from env var (checked every call for testability)."""
+    return Path(os.getenv("DATABASE_PATH", _DEFAULT_DB))
+
+
+# Module-level convenience (snapshot at import time)
+DB_PATH = _resolve_db_path()
 
 
 def get_conn(
@@ -41,7 +50,7 @@ def get_conn(
         rows = con.execute("SELECT * FROM facturas WHERE status='pending'").fetchall()
         con.close()
     """
-    path = str(db_path or DB_PATH)
+    path = str(db_path or _resolve_db_path())
     con = sqlite3.connect(path, timeout=10.0)
     con.execute("PRAGMA busy_timeout = 5000")
     if wal:
