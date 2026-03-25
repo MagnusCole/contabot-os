@@ -247,6 +247,48 @@
             color: var(--accent);
             text-decoration: none;
         }
+        /* Chat input */
+        .chat-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+        }
+        .chat-input input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+        .chat-input button {
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .chat-input button:hover { background: #0f766e; }
+        .chat-input button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .msg-typing {
+            align-self: flex-start;
+            background: #f3f4f6;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
         footer a:hover { text-decoration: underline; }
         .footer-links {
             display: flex;
@@ -274,17 +316,16 @@
         </div>
     </section>
 
-    <!-- Demo chat -->
-    <section class="demo">
-        <h2>Asi funciona</h2>
-        <div class="chat">
-            <div class="msg msg-user">20612345678</div>
-            <div class="msg msg-bot">Listo! Te registre como <strong>DISTRIBUIDORA EL SOL SAC</strong><br><br>Ahora puedo:<br>- Registrar gastos con foto<br>- Darte tu estado financiero<br>- Calcular tus impuestos SUNAT</div>
-            <div class="msg msg-user">como voy</div>
-            <div class="msg msg-bot"><strong>Tu negocio — Marzo 2026</strong><br><br>Ventas: S/ 45,800.00<br>Gastos: S/ 18,200.00<br>IGV por pagar: S/ 4,968.00<br><br><strong>Utilidad neta: S/ 19,432.00</strong><br>Margen: 42.4%</div>
-            <div class="msg msg-user">cuanto debo a sunat</div>
-            <div class="msg msg-bot"><strong>Obligaciones SUNAT — Marzo 2026</strong><br><br>IGV por pagar: S/ 4,968.00<br>Renta mensual: S/ 388.14<br><strong>Total: S/ 5,356.14</strong><br><br>Vence el 17 de abril</div>
+    <!-- Live demo chat -->
+    <section class="demo" id="demo">
+        <h2>Pruebalo ahora — escribe tu RUC para empezar</h2>
+        <div class="chat" id="chat-messages">
+            <div class="msg msg-bot">Hola! Soy <strong>ContaBot</strong>, tu contador IA.<br><br>Para empezar, escribe un <strong>RUC</strong> (11 digitos).<br><br>Ejemplo: 20612345678</div>
         </div>
+        <form id="chat-form" class="chat-input">
+            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." autocomplete="off" />
+            <button type="submit">Enviar</button>
+        </form>
     </section>
 
     <!-- Features -->
@@ -381,5 +422,74 @@
 
 </div>
 
+<script>
+(function() {
+    const chatEl = document.getElementById('chat-messages');
+    const formEl = document.getElementById('chat-form');
+    const inputEl = document.getElementById('chat-input');
+    const sessionId = 'demo_' + Math.random().toString(36).slice(2, 10);
+
+    function addMsg(text, isUser) {
+        const div = document.createElement('div');
+        div.className = 'msg ' + (isUser ? 'msg-user' : 'msg-bot');
+        div.innerHTML = text
+            .replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+            .replace(/_([^_]+)_/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+        chatEl.appendChild(div);
+        chatEl.scrollTop = chatEl.scrollHeight;
+        return div;
+    }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.className = 'msg-typing';
+        div.id = 'typing';
+        div.textContent = 'Escribiendo...';
+        chatEl.appendChild(div);
+        chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function hideTyping() {
+        const el = document.getElementById('typing');
+        if (el) el.remove();
+    }
+
+    formEl.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const msg = inputEl.value.trim();
+        if (!msg) return;
+
+        inputEl.value = '';
+        inputEl.disabled = true;
+        formEl.querySelector('button').disabled = true;
+
+        addMsg(msg, true);
+        showTyping();
+
+        try {
+            const resp = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, session_id: sessionId }),
+            });
+            const data = await resp.json();
+            hideTyping();
+            addMsg(data.response || 'Error procesando mensaje.', false);
+        } catch (err) {
+            hideTyping();
+            addMsg('No se pudo conectar con el servidor. Intenta de nuevo.', false);
+        }
+
+        inputEl.disabled = false;
+        formEl.querySelector('button').disabled = false;
+        inputEl.focus();
+    });
+
+    // Scroll chat area
+    chatEl.style.maxHeight = '400px';
+    chatEl.style.overflowY = 'auto';
+})();
+</script>
 </body>
 </html>
