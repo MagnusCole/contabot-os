@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContaBot — Contador IA para MYPES peruanas</title>
+    <meta name="description" content="Contabilidad inteligente por WhatsApp. Registra gastos con foto, calcula impuestos SUNAT, reportes fiscales. Gratis y open source.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧾</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #fafafa;
+            --text: #1a1a1a;
+            --muted: #666;
+            --accent: #0d9488;
+            --accent-light: #ccfbf1;
+            --card-bg: #fff;
+            --border: #e5e5e5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 48px;
+            text-align: center;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 520px;
+            margin: 0 auto 32px;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #0f766e; }
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: #f5f5f5; }
+
+        /* Demo */
+        .demo {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 48px 0;
+        }
+        .demo h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+        .chat {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .msg-user {
+            align-self: flex-end;
+            background: #dcfce7;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-bot {
+            align-self: flex-start;
+            background: #f3f4f6;
+            border-bottom-left-radius: 4px;
+        }
+        .msg-bot strong { color: var(--accent); }
+
+        /* Features */
+        .features {
+            padding: 48px 0;
+        }
+        .features h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+        .feature {
+            padding: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .feature p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* Setup */
+        .setup {
+            padding: 48px 0;
+        }
+        .setup h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .setup > p {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .step-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .step h3 { font-size: 15px; font-weight: 600; }
+        .step p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+        .step code {
+            display: inline-block;
+            background: #f3f4f6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            margin-top: 4px;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 48px 0;
+            text-align: center;
+        }
+        .stat-num {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        footer p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-badge">Open Source &middot; Gratis para siempre</span>
+        <h1>Tu contador IA<br>por WhatsApp</h1>
+        <p>Registra gastos con foto, calcula impuestos SUNAT y genera reportes fiscales. Todo desde tu celular.</p>
+        <div class="hero-actions">
+            <a href="https://github.com/MagnusCole/contabot-os" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                Ver en GitHub
+            </a>
+            <a href="#setup" class="btn btn-secondary">Instalar ahora</a>
+        </div>
+    </section>
+
+    <!-- Demo chat -->
+    <section class="demo">
+        <h2>Asi funciona</h2>
+        <div class="chat">
+            <div class="msg msg-user">20612345678</div>
+            <div class="msg msg-bot">Listo! Te registre como <strong>DISTRIBUIDORA EL SOL SAC</strong><br><br>Ahora puedo:<br>- Registrar gastos con foto<br>- Darte tu estado financiero<br>- Calcular tus impuestos SUNAT</div>
+            <div class="msg msg-user">como voy</div>
+            <div class="msg msg-bot"><strong>Tu negocio — Marzo 2026</strong><br><br>Ventas: S/ 45,800.00<br>Gastos: S/ 18,200.00<br>IGV por pagar: S/ 4,968.00<br><br><strong>Utilidad neta: S/ 19,432.00</strong><br>Margen: 42.4%</div>
+            <div class="msg msg-user">cuanto debo a sunat</div>
+            <div class="msg msg-bot"><strong>Obligaciones SUNAT — Marzo 2026</strong><br><br>IGV por pagar: S/ 4,968.00<br>Renta mensual: S/ 388.14<br><strong>Total: S/ 5,356.14</strong><br><br>Vence el 17 de abril</div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <h2>Todo lo que necesita tu MYPE</h2>
+        <div class="feature-grid">
+            <div class="feature">
+                <div class="feature-icon">📷</div>
+                <h3>Gastos por foto</h3>
+                <p>Manda foto de factura o boleta. La IA extrae proveedor, monto, IGV y lo registra.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🏛️</div>
+                <h3>Impuestos SUNAT</h3>
+                <p>IGV, renta mensual y fecha de vencimiento. Regimen MYPE, RER o General.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Estado financiero</h3>
+                <p>P&L del mes en 3 segundos. Ventas, gastos, utilidad, margen y tendencia.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Reporte semanal</h3>
+                <p>Cada lunes a las 8am te llega tu resumen sin pedirlo.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>100% local</h3>
+                <p>Tus datos nunca salen de tu servidor. SQLite, sin cloud obligatorio.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🆓</div>
+                <h3>Gratis para siempre</h3>
+                <p>Open source, sin trucos, sin limites. Hecho para Peru.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div>
+            <div class="stat-num">2.3M</div>
+            <div class="stat-label">MYPES en Peru</div>
+        </div>
+        <div>
+            <div class="stat-num">95%</div>
+            <div class="stat-label">usan WhatsApp</div>
+        </div>
+        <div>
+            <div class="stat-num">S/0</div>
+            <div class="stat-label">costo del software</div>
+        </div>
+    </div>
+
+    <!-- Setup -->
+    <section class="setup" id="setup">
+        <h2>Instalacion en 3 pasos</h2>
+        <p>Necesitas: un servidor con Docker (o tu propia laptop).</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                    <h3>Clona el repositorio</h3>
+                    <code>git clone https://github.com/MagnusCole/contabot-os.git</code>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                    <h3>Configura y levanta</h3>
+                    <code>cp .env.example .env && docker compose up -d</code>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                    <h3>Escanea el QR de WhatsApp</h3>
+                    <p>Abre <code>http://localhost:3000</code> y vincula tu numero. Listo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="https://github.com/MagnusCole/contabot-os">GitHub</a>
+            <a href="https://github.com/MagnusCole/contabot-os/issues">Reportar bug</a>
+            <a href="https://github.com/MagnusCole/contabot-os#variables-de-entorno">Documentacion</a>
+        </div>
+        <p>ContaBot es software libre (LGPL-3.0). Hecho en Peru.</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
