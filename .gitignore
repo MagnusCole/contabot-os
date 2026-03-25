@@ -1,0 +1,52 @@
+# ============================================================
+# ContaBot — .gitignore
+# ============================================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# --- Entorno virtual ---
+.venv/
+venv/
+env/
+
+# --- Variables de entorno y secretos ---
+.env
+.xai_key
+*.key
+*.pem
+
+# --- Base de datos ---
+data/db/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Tests y cobertura ---
+.coverage
+htmlcov/
+.pytest_cache/
+
+# --- Logs ---
+*.log
+logs/

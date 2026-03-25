@@ -1,0 +1,33 @@
+# ContaBot — Docker Compose
+# Levanta el bot y el gateway de WhatsApp con un solo comando.
+#
+# Uso:
+#   docker-compose up -d
+#
+# Prerequisito:
+#   Copiar .env.example a .env y configurar tus valores.
+
+services:
+  waha:
+    image: devlikeapro/waha
+    container_name: contabot-waha
+    ports:
+      - "3000:3000"
+    environment:
+      - WAHA_DEFAULT_ENGINE=WEBJS
+    restart: unless-stopped
+
+  contabot:
+    build: .
+    container_name: contabot-app
+    depends_on:
+      - waha
+    env_file:
+      - .env
+    environment:
+      - WAHA_URL=http://waha:3000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contabot"
+version = "0.1.0"
+description = "ERP open source para MYPES peruanas — contabilidad, facturacion SUNAT, impuestos y gastos por foto desde WhatsApp"
+readme = "README.md"
+license = "LGPL-3.0-or-later"
+requires-python = ">=3.11"
+authors = [
+    { name = "Comunidad ContaBot" },
+]
+keywords = ["erp", "contabilidad", "sunat", "peru", "mypes", "facturacion", "whatsapp"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Natural Language :: Spanish",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "httpx>=0.27",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "python-dotenv>=1.0",
+    "Pillow>=10.0",
+    "SQLAlchemy>=2.0",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+ai = [
+    "openai>=1.40",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "pytest-asyncio>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/contabot/contabot-os"
+Issues = "https://github.com/contabot/contabot-os/issues"
+
+[tool.setuptools.packages.find]
+include = ["contabot*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
