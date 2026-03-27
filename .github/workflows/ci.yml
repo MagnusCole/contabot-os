@@ -19,5 +19,5 @@ jobs:
       - run: pip install ruff
       - run: ruff check . --select E,F --ignore E501,F401,E402,F841
       - run: pip install -e .
-      - run: pip install pytest
+      - run: pip install pytest pytest-asyncio
       - run: pytest --tb=short -q
