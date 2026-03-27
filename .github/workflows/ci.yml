@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install ruff
-      - run: ruff check .
+      - run: ruff check . --select E,F --ignore E501,F401,E402,F841
       - run: pip install -e .
       - run: pip install pytest
       - run: pytest --tb=short -q

@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import logging
 import sqlite3
-from datetime import date
-from pathlib import Path
 
 from contabot.db.connection import DB_PATH, get_conn
 

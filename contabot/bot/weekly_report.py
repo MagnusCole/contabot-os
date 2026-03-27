@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import os
 from datetime import date
 
 from .onboarding import listar_clientes_activos

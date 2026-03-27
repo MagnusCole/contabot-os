@@ -34,7 +34,6 @@ from sqlalchemy.orm import (
     relationship,
     sessionmaker,
 )
-from sqlalchemy.sql import func
 
 # ============================================================================
 # DATABASE CONFIGURATION

@@ -7,7 +7,7 @@ from pathlib import Path
 # Asegurar que el paquete contabot sea importable
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from contabot.db.connection import get_engine, DB_PATH
+from contabot.db.connection import DB_PATH, get_engine
 from contabot.db.models import Base
 
 

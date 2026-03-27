@@ -7,7 +7,7 @@ Read-only -- no data modifications.
 from __future__ import annotations
 
 import logging
-from datetime import date, datetime
+from datetime import date
 
 from contabot.db.connection import get_conn
 

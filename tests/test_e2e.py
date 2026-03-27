@@ -4,9 +4,6 @@ Verifica el flujo completo: DB -> onboarding -> mensaje -> respuesta.
 """
 from __future__ import annotations
 
-import os
-import tempfile
-
 import pytest
 
 
@@ -30,11 +27,11 @@ class TestOnboarding:
     """Tests del flujo de registro."""
 
     def test_nuevo_usuario_recibe_bienvenida(self):
-        from contabot.bot.onboarding import esta_registrado, MSG_ONBOARDING
+        from contabot.bot.onboarding import esta_registrado
         assert not esta_registrado("51999888777")
 
     def test_registro_con_ruc(self):
-        from contabot.bot.onboarding import registrar_mype, esta_registrado, obtener_cliente
+        from contabot.bot.onboarding import esta_registrado, obtener_cliente, registrar_mype
         resultado = registrar_mype("51999888777", "20100000001")
         assert "Listo" in resultado
         assert esta_registrado("51999888777")
@@ -54,7 +51,7 @@ class TestOnboarding:
         assert "11 d" in resultado.lower()
 
     def test_listar_clientes_activos(self):
-        from contabot.bot.onboarding import registrar_mype, listar_clientes_activos
+        from contabot.bot.onboarding import listar_clientes_activos, registrar_mype
         registrar_mype("51999888777", "20100000001")
         registrar_mype("51999888666", "20100000002")
         activos = listar_clientes_activos()
@@ -144,8 +141,9 @@ class TestCalendar:
     """Tests del calendario SUNAT."""
 
     def test_vencimiento_conocido(self):
-        from contabot.fiscal.calendar import get_fecha_vencimiento
         from datetime import date
+
+        from contabot.fiscal.calendar import get_fecha_vencimiento
         fecha = get_fecha_vencimiento("20100000001", "2026-01")
         assert fecha == date(2026, 2, 14)  # digito 1 -> dia 14
 
@@ -166,6 +164,7 @@ class TestWebhookServer:
     @pytest.fixture
     def client(self):
         from fastapi.testclient import TestClient
+
         from contabot.bot.server import app
         return TestClient(app)
 

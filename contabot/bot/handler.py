@@ -110,12 +110,12 @@ async def procesar_mensaje(
     else:
         # Intent no reconocido -- dar ayuda contextual
         return (
-            f"No entendi tu mensaje. Puedes:\n\n"
-            f"*Mandar foto* de factura/boleta\n"
-            f"Escribir *estado* para ver tu P&L\n"
-            f"Escribir *impuestos* para ver obligaciones\n"
-            f"Escribir *gastos* para ver egresos del mes\n"
-            f"Escribir *ayuda* para mas opciones"
+            "No entendi tu mensaje. Puedes:\n\n"
+            "*Mandar foto* de factura/boleta\n"
+            "Escribir *estado* para ver tu P&L\n"
+            "Escribir *impuestos* para ver obligaciones\n"
+            "Escribir *gastos* para ver egresos del mes\n"
+            "Escribir *ayuda* para mas opciones"
         )
 
 
